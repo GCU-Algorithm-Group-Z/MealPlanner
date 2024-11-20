@@ -1,8 +1,8 @@
+from data import food_korean, food_Japanese, food_Chinese, food_etc
 import random
 
-# 사용자 정보 수집 및 BMR 계산 함수
+# 사용자 정보 입력 함수
 def get_user_info():
-    print("사용자 정보를 입력받고 있습니다...")  # 디버깅용 메시지
     while True:
         try:
             age = int(input("나이를 입력하세요 (1~99): "))
@@ -49,14 +49,29 @@ def set_calorie_goal(bmr):
             print("유효한 목표를 입력해주세요.")
             continue
 
-# 0-1 Knapsack 문제를 이용한 최대 단백질 섭취 계산 (예시용)
+# 칼로리가 최소인 음식 검색 함수
+def find_min_cal_item(items_list):
+    lowest_cal_item = items_list[0]
+
+    for item in items_list:
+        if item[2] < lowest_cal_item[2]:
+            lowest_cal_item = item
+
+    return lowest_cal_item
+
+
+# 0-1 Knapsack 문제를 이용한 최대 단백질 섭취 계산 
 def max_protein_intake(calories, items):
-    # 아이템 형식: [(이름, 단백질양, 칼로리), ...]
-    n = len(items)
+    items_list = [
+        (name, details["protein"], details["calories"], details["restaurant"])
+        for name, details in items.items()
+    ]
+
+    n = len(items_list)
     dp = [[0] * (calories + 1) for _ in range(n + 1)]
     
     for i in range(1, n + 1):
-        name, protein, cal = items[i - 1]
+        name, protein, cal, restaurant = items_list[i - 1]
         for j in range(calories + 1):
             if cal <= j:
                 dp[i][j] = max(dp[i - 1][j], dp[i - 1][j - cal] + protein)
@@ -67,25 +82,37 @@ def max_protein_intake(calories, items):
     selected_items = []
     j = calories
     for i in range(n, 0, -1):
-        if dp[i][j] != dp[i - 1][j]:  # i번째 아이템이 선택되었다면
-            name, protein, cal = items[i - 1]
-            selected_items.append(name)
+        if dp[i][j] != dp[i - 1][j]:  # i번째 아이템이 선택되었으면
+            name, protein, cal, restaurant = items_list[i - 1]
+            selected_items.append((name,restaurant))
             j -= cal  # 남은 칼로리 줄이기
 
-    return dp[n][calories], selected_items
+    if dp[n][calories] == 0: # 조건을 만족하는 음식이 없으면 
+        lowest_cal_item = find_min_cal_item(items_list) #카테고리 중 가장 칼로리가 낮은 음식 리턴
+        return lowest_cal_item[1], [(lowest_cal_item[0], lowest_cal_item[3])]
+        
+    else:
+        return dp[n][calories], selected_items
 
+# 음식 카테고리 랜덤 선택 함수
 def select_food_category():
-    food_types = ["한식", "중식", "일식", "양식"] # 예시 음식 카테고리
-    return random.choice(food_types)
+    food_types = ["한식", "일식", "중식", "기타"] 
+    selected_category = random.choice(food_types)
+    if selected_category == "한식":
+        return selected_category, food_korean
+    elif selected_category == "일식":
+        return selected_category, food_Japanese
+    elif selected_category == "중식":
+        return selected_category, food_Chinese
+    else:
+        return selected_category, food_etc
 
 # 실행 함수 예시
 def main():
-    print("프로그램을 시작합니다…")  # 디버깅용 메시지
 
     while (1):
         age, weight, height, gender = get_user_info()
-        bmr = round(calculate_bmr(age, weight, height, gender),0)
-        print(f"계산된 BMR: {bmr}")  # 디버깅용 메시지
+        bmr = int(round(calculate_bmr(age, weight, height, gender),0))
         if bmr > 3000:
             print("BMR이 상한값을 초과했습니다. 정보를 다시 입력해주세요.")
             continue
@@ -97,9 +124,6 @@ def main():
     calorie_goal = set_calorie_goal(bmr)
     print(f"사용자의 하루 목표 칼로리: {calorie_goal} kcal")
 
-    # 예시 음식 아이템: (이름, 단백질, 칼로리)
-    items = [('짜장면',20, 200), ('탕수육',30, 300), ('샌드위치',10, 150), ('김밥',25, 250)]
-
     #아침, 점심, 저녁 시간대와 각 시간대별 칼로리 (비율=2:3:3)
     time = ['아침', '점심', '저녁'] 
     time_kcal = [(calorie_goal * 2 ) // 8, (calorie_goal * 3 ) // 8, (calorie_goal * 3 ) // 8]
@@ -109,14 +133,13 @@ def main():
     for i in range(3):
         print(f"{time[i]} 식사: {time_kcal[i]}칼로리")
         #음식 카테고리 랜덤 선택
-        food_category = select_food_category()
+        food_category, food_items = select_food_category()
         print(f"선택된 음식 카테고리: {food_category}")
-        max_protein , food_list= max_protein_intake(time_kcal[i], items)
+        max_protein , food_list= max_protein_intake(time_kcal[i], food_items)
         #출력
         print(f"최대 단백질 섭취량: {max_protein}g")
         print(f"선택된 음식 메뉴: {food_list}")
         print("-----------------")
 
-
-# 실행
+#실행
 main()
