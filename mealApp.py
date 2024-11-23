@@ -28,18 +28,6 @@ def calculate_bmr(age, weight, height, gender):
     return bmr
 
 
-# 칼로리 목표 설정 함수
-def set_calorie_goal(bmr):
-    goal = st.selectbox("목표를 선택하세요:", options=["다이어트", "벌크업"])
-
-    if goal == "다이어트":
-        calorie_goal = int(max(1200, bmr - 200))
-    elif goal == "벌크업":
-        calorie_goal = int(min(3000, bmr + 200))
-
-    return calorie_goal
-
-
 # 칼로리가 최소인 음식 검색 함수
 def find_min_cal_item(items_list):
     lowest_cal_item = items_list[0]
