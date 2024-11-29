@@ -35,17 +35,17 @@ food_korean = {
         "restaurant": "GachonFoodcourt"
     },
     "KimchiJjigae": {
-        "calories": 209,
+        "calories": 509,
         "protein": 11,
         "restaurant": "GachonFoodcourt"
     },
     "DoenjangJjigae": {
-        "calories": 180,
+        "calories": 480,
         "protein": 15,
         "restaurant": "GachonFoodcourt"
     },
     "SuntofuJjigae": {
-        "calories": 150,
+        "calories": 450,
         "protein": 12.2,
         "restaurant": "JaesoonSikdang"
     },
@@ -65,7 +65,7 @@ food_korean = {
         "restaurant": "GachonFoodcourt"
     },
     "Yukgaejang": {
-        "calories": 150,
+        "calories": 450,
         "protein": 16.2,
         "restaurant": "GachonFoodcourt"
     },
