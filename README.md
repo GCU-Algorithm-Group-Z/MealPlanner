@@ -1,4 +1,6 @@
 # MealPlanner
+# Our project is distributed in Streamlit Click below link!
+https://mealapppy-btau2zlzajbzrrmdnxcezl.streamlit.app/
 ***
 
 ### 주요 기능
