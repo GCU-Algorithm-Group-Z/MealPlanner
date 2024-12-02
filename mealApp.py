@@ -3,7 +3,7 @@ import random
 from data import food_korean, food_Japanese, food_Chinese, food_etc
 
 
-# 사용자 정보 입력 함수
+# 사용자 정보 입력 함수 / streamlit(st.)를 이용한 UI구현
 def get_user_info():
     age = st.number_input("나이를 입력하세요 (1~99):", min_value=1, max_value=99)
     weight = st.number_input(
